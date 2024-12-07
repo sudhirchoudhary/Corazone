@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from tutorial.quickstart.serializers import UserSerializer
 
 from example.models import User, Todo
 
@@ -22,7 +23,7 @@ class AddUser(APIView):
         user.save()
         print("there")
 
-        return Response({'message':'success'}, status=status.HTTP_200_OK)
+        return Response({'message': 'success'}, status=status.HTTP_200_OK)
 
 
 class AddTodo(APIView):
@@ -48,3 +49,38 @@ class AddTodo(APIView):
         todo.save()
 
         return Response(data={'message': 'success'}, status=status.HTTP_200_OK)
+
+
+class GetAllUsers(APIView):
+    def get(self, request):
+        users = User.objects.all().values('id', 'name', 'age')
+        data = {}
+        user_list = []
+        for user in users:
+            user_list.append(user)
+
+        data['users'] = user_list
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class GetUserTodos(APIView):
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        if user_id is None:
+            return Response({'error': 'user_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        if user is None:
+            return Response({'error': 'invalid user'}, status=status.HTTP_404_NOT_FOUND)
+
+        todos = Todo.objects.filter(user_id=user_id).all().values('title', 'content')
+
+        data = {}
+        todo_list = []
+
+        for todo in todos:
+            todo_list.append(todo)
+
+        data["todo_list"] = todo_list
+
+        return Response(data={'message': 'success', 'data': data}, status=status.HTTP_200_OK)

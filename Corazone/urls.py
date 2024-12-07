@@ -18,11 +18,16 @@ from django.contrib import admin
 # from django.contrib import admin
 from django.urls import path
 
-from example.views import AddTodo, AddUser
+from example.views import AddTodo, AddUser, GetAllUsers, GetUserTodos
 
 urlpatterns = [
     #    path('admin/', admin.site.urls),
     #path('admin/', admin.site.urls),
     path('todo/addTodo', AddTodo.as_view(), name='add_todo'),
     path('addUser', AddUser.as_view(), name='add_user'),
+
+    path('getAllUsers', GetAllUsers.as_view(), name='get_all_users'),
+
+    path('getUserTodos', GetUserTodos.as_view(), name='get_user_todos')
+
 ]
