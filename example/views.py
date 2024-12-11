@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from tutorial.quickstart.serializers import UserSerializer
+import redis
 
 from example.models import User, Todo
 
@@ -21,6 +22,22 @@ class AddUser(APIView):
         print("here")
         user = User(name=name, age=age)
         user.save()
+
+        r = redis.Redis(
+            host='redis-11483.c212.ap-south-1-1.ec2.redns.redis-cloud.com',
+            port=11483,
+            decode_responses=True,
+            username="default",
+            password="P4zWn9Lb6DXx5saJ2aIFTGFbhSJ60x3Q",
+        )
+
+        r.set('foo', 'bar')
+        # True
+
+        result = r.get('foo')
+        print(result)
+        # >>> bar
+
         print("there")
 
         return Response({'message': 'success'}, status=status.HTTP_200_OK)
